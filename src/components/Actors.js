@@ -1,7 +1,32 @@
 import React from "react";
-import axios from "axios";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { dataLoader } from "./dataLoader";
+class AddActor extends React.Component {
+  state = {
+    name: ""
+  };
+  onClickAdd = e => {
+    const { name } = this.state;
+    this.props.addActor(name);
+  };
+  handleChange = e => {
+    this.setState({ name: e.currentTarget.value });
+  };
+  render() {
+    const { name } = this.state;
+    return (
+      <form action="">
+        <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={this.handleChange}
+        />
+        <input type="button" onClick={this.onClickAdd} value="Add actor" />
+      </form>
+    );
+  }
+}
+
 const Actor = ({ actor, deleteActor }) => {
   const { name } = actor;
 
@@ -22,6 +47,14 @@ class Actors extends React.Component {
     });
     this.setState({ data: updateArr });
   };
+  addActor = name => {
+    const obj = {
+      name,
+      url: Date.now()
+    };
+    const arr = [...this.state.data, obj];
+    this.setState({ data: arr });
+  };
   componentDidMount() {
     dataLoader()
       .then(data => {
@@ -37,6 +70,8 @@ class Actors extends React.Component {
       <main>
         <div className="main__leftblock">
           <h1>Actors</h1>
+          <h3>Add Actor</h3>
+          <AddActor addActor={this.addActor} />
         </div>
         <div className="main__rightblock">
           {data.map(item => (
